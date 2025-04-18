@@ -1,0 +1,49 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import datetime as dt
+
+# --- Page config ---
+st.set_page_config(page_title="Recession Risk Dashboard", layout="wide")
+
+# --- Sample Data (replace with API data for live updates) ---
+data = {
+    "Indicator": [
+        "Yield Curve Inversion", "Inflation", "Interest Rates", "Money Supply (M2)", "Consumer Debt Stress",
+        "Valuations (P/E)", "Corporate Profits", "Labor Market", "Housing Market Stress", "Geopolitical Tensions",
+        "Corporate Debt Levels", "Stock Market Concentration", "Global Trade Health", "Consumer Confidence",
+        "Small Business Optimism", "Job Openings (JOLTS)", "Initial Unemployment Claims", "Commercial Real Estate (CRE)",
+        "Bank Lending Standards", "Corporate Layoffs / Hiring Freezes", "Insider Selling vs. Buying Ratios",
+        "Equity Market Breadth", "ISM Services PMI", "Baltic Dry Index", "Copper Prices", "Volatility Index (VIX)",
+        "Federal Reserve Balance Sheet", "Gold Prices"
+    ],
+    "Risk Level (1-5)": [
+        5, 4, 5, 4, 4, 4, 3, 2, 3, 4, 4, 5, 4, 3, 4, 3, 2, 4, 4, 4, 4, 4, 3, 3, 3, 3, 4, 3
+    ]
+}
+
+df = pd.DataFrame(data)
+df = df.sort_values(by="Risk Level (1-5)", ascending=False)
+
+# --- Risk color coding ---
+def color_risk(val):
+    if val <= 2:
+        return 'background-color: #b6e3b6'  # green
+    elif val == 3:
+        return 'background-color: #ffe599'  # yellow
+    else:
+        return 'background-color: #f4cccc'  # red
+
+# --- Title ---
+st.title("📊 Recession Risk Dashboard – 2025 (Live View)")
+st.markdown("Updated: **{}**".format(dt.datetime.now().strftime('%Y-%m-%d %H:%M')))
+
+# --- Display ---
+st.dataframe(df.style.applymap(color_risk, subset=["Risk Level (1-5)"]))
+
+# --- Risk Distribution Chart ---
+st.subheader("🔍 Risk Level Distribution")
+st.bar_chart(df.set_index("Indicator")[["Risk Level (1-5)"]])
+
+# --- Footer ---
+st.markdown("\n*Powered by Streamlit – update with real-time data for live dashboarding.*")
